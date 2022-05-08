@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "geolocator": "^2.1.5"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}
