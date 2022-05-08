@@ -7,20 +7,19 @@ geolocator.config({
 const stopEl = document.getElementById('stop')
 
 const harper = {
-  longitude: 41.788145,
-  latitude: -87.599601,
+  latitude: 41.788145,
+  longitude: -87.599601,
 }
 
 const kent = {
-  longitude: 41.790029,
-  latitude: -87.599659,
+  latitude: 41.790029,
+  longitude: -87.599659,
 }
 
 const HARPER = 'Harper'
 const KENT = 'Kent/Ryerson'
 
 let currentStop = null
-let timeReached = null
 
 window.onload = function () {
   const options = {
@@ -38,37 +37,34 @@ window.onload = function () {
     console.log(location)
     const newStop = calcStop(location.coords)
     if (newStop && newStop !== currentStop) {
-      if (!timeReached || Date.now() - timeReached > 60 * 1000) {
-        timeReached = Date.now()
-        currentStop = newStop
-        stopEl.innerText = newStop === KENT ? HARPER : KENT
-      }
+      currentStop = newStop
+      stopEl.innerText = newStop === KENT ? HARPER : KENT
     }
   })
 }
 
 function calcStop(coords) {
-  if (coords.longitude > kent.longitude) {
+  if (coords.latitude > kent.latitude) {
     return KENT
-  } else if (coords.longitude < harper.longitude) {
+  } else if (coords.latitude < harper.latitude) {
     return HARPER
   } else {
     const distanceToKent  = geolocator.calcDistance({
       from: coords,
       to: kent,
-      formula: geolocator.DistanceFormula.HAVERSINE,
+      formula: geolocator.DistanceFormula.PYTHAGOREAN,
       unitSystem: geolocator.UnitSystem.METRIC,
     })
-    if (distanceToKent / 1000 <= 5) {
+    if (distanceToKent * 1000 <= 10) {
       return KENT
     }
     const distanceToHarper = geolocator.calcDistance({
       from: coords,
       to: harper,
-      formula: geolocator.DistanceFormula.HAVERSINE,
+      formula: geolocator.DistanceFormula.PYTHAGOREAN,
       unitSystem: geolocator.UnitSystem.METRIC,
     })
-    if (distanceToHarper / 1000 <= 5) {
+    if (distanceToHarper * 1000 <= 10) {
       return HARPER
     }
   }
